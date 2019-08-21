@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% block bootstrap4_content %}
+    <h1 align="center">-----------------------------------------------</h1>
+<h1 align="center">Maoyan Movies Top100</h1>
+<h1 align="center">-----------------------------------------------</h1>
+<form method="POST" id="queryform">
+    <div class="container">
+        <div class="form-group">
+            <p>Search by name or actors:{{ form.querystring }} &nbsp;<button type="submit" class="btn btn-primary">Go</button></p>
+            <p><a class='active' href="?pull=1">Pull all data by Spider again</a></p>
+        </div>
+    </div>
+</form>
+<div class="container">
+<table class="table table-hover">
+<thead>
+    <tr align="center">
+        <th>ACTIONS</th>
+        <th>NO</th>
+        <th>NAME</th>
+        <th>ACTORS</th>
+        <th>TIME</th>
+        <th>SCORE</th>
+    </tr>
+</thead>
+<tbody>
+    {% for row in rows %}
+    <tr>
+        <td>
+
+             <a class="active" href="" data-toggle="modal" data-target="#updateModal" data-no="{{ row.no }}">Update</a>
+             <a class='active' href="?delete={{ row.no }}&page={{ rows.number }}">Delete</a>
+        </td>
+        <td id ="tdNo{{ row.no }}">{{ row.no }}</td>
+        <td id ="tdName{{ row.no }}">{{ row.name }}</td>
+        <td id ="tdActors{{ row.no }}">{{ row.actors }}</td>
+        <td id ="tdTime{{ row.no }}">{{ row.time }}</td>
+        <td id ="tdScore{{ row.no }}">{{ row.score }}</td>
+    </tr>
+    {% endfor %}
+ </tbody>
+</table>
+
+    <div id="pages" class="text-center" >
+        <nav>
+            <ul class="pagination">
+                <li class="step-links">
+                {% if rows.has_previous %}
+                    <a class='active' href="?page={{ rows.previous_page_number }}">Previous</a>
+                {% endif %}
+
+                <span class="current">
+                    <<<<<< Page {{ rows.number }} of {{ rows.paginator.num_pages }}>>>>>></span>
+
+                {% if rows.has_next %}
+                    <a class='active' href="?page={{ rows.next_page_number }}">Next</a>
+                {% endif %}
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<form method="POST" id="updateform">
+<!-- 模态框 -->
+  <div class="modal fade" id="updateModal">
+    <div class="modal-dialog -lg">
+        <div class="modal-content">
+        <!-- 模态框头部 -->
+        <div class="modal-header">
+          <h4 class="modal-title">Update</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <!-- 模态框主体 -->
+        <div class="modal-body">
+          <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Field Name</th>
+                    <th>Field Value</th>
+                </tr>
+            </thead>
+              <tbody>
+              <tr>
+                  <td>No:</td>
+                  <td>
+                      <input type="text" name="upNo" value="" readonly="readonly"/>
+                  </td>
+              </tr>
+              <tr>
+                  <td>Name:</td>
+                  <td>
+                      <input type="text" name="upName" value="" required/>
+                  </td>
+              </tr>
+              <tr>
+                  <td>Actors:</td>
+                  <td><input type="text"  name="upActors" value="" required/></td>
+              </tr>
+              <tr>
+                  <td>Time:</td>
+                  <td ><input type="text"  name="upTime" value="" required/></td>
+              </tr>
+              <tr>
+                  <td>Score:</td>
+                  <td><input type="text"  name="upScore" value="" required/></td>
+              </tr>
+              </tbody>
+          </table>
+        </div>
+
+        <!-- 模态框底部 -->
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Confirm</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+        </div>
+    </div>
+  </div>
+ </form>
+ <script>
+
+    $('#updateModal').on('show.bs.modal', function(e) {
+        //get data-id attribute of the clicked element
+        var txtNo = $(e.relatedTarget).data('no');
+        //populate the textbox
+        $(e.currentTarget).find('input[name="upNo"]').val(txtNo);
+        $(e.currentTarget).find('input[name="upName"]').val(document.getElementById("tdName"+txtNo).innerText);
+        $(e.currentTarget).find('input[name="upActors"]').val(document.getElementById("tdActors"+txtNo).innerText);
+        $(e.currentTarget).find('input[name="upTime"]').val(document.getElementById("tdTime"+txtNo).innerText);
+        $(e.currentTarget).find('input[name="upScore"]').val(document.getElementById("tdScore"+txtNo).innerText);
+
+    });
+</script>
+{% endblock %}
